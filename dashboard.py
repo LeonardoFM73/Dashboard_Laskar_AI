@@ -8,7 +8,7 @@ from streamlit_folium import folium_static
 from folium.plugins import HeatMap
 sns.set_style("whitegrid")
  
-df = pd.read_csv("E:\Laskar Ai\submission\dashboard\main_data.csv")
+df = pd.read_csv("main_data.csv")
 
 location_df = df[['year','PM2.5', 'PM10','TEMP','PRES','station']].copy()
 
