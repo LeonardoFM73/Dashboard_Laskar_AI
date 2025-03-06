@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,7 +9,11 @@ from streamlit_folium import folium_static
 from folium.plugins import HeatMap
 sns.set_style("whitegrid")
  
-df = pd.read_csv("main_data.csv")
+# df = pd.read_csv(".\dashboard\main_data.csv")
+current_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(current_dir, "main_data.csv")
+
+df = pd.read_csv(file_path)
 
 location_df = df[['year','PM2.5', 'PM10','TEMP','PRES','station']].copy()
 
@@ -28,8 +33,8 @@ locations = {
 }
 
 # Tambahkan kolom latitude dan longitude ke DataFrame
-location_df["Latitude"] = location_df["station"].map({city: coords[0] for city, coords in locations.items()})
-location_df["Longitude"] = location_df["station"].map({city: coords[1] for city, coords in locations.items()})
+location_df["Latitude"] = location_df["station"].map({station: coords[0] for station, coords in locations.items()})
+location_df["Longitude"] = location_df["station"].map({station: coords[1] for station, coords in locations.items()})
 # Judul aplikasi
 st.title("Analisis Kualitas Udara Berdasarkan Tahun")
 
@@ -43,8 +48,8 @@ filtered_df = location_df[location_df["year"] == selected_year]
 avg_air_quality = filtered_df.groupby("station").mean().reset_index()
 
 # Tambahkan koordinat ke hasil rata-rata
-avg_air_quality["Latitude"] = avg_air_quality["station"].map({city: coords[0] for city, coords in locations.items()})
-avg_air_quality["Longitude"] = avg_air_quality["station"].map({city: coords[1] for city, coords in locations.items()})
+avg_air_quality["Latitude"] = avg_air_quality["station"].map({station: coords[0] for station, coords in locations.items()})
+avg_air_quality["Longitude"] = avg_air_quality["station"].map({station: coords[1] for station, coords in locations.items()})
 
 st.subheader(f"Grafik Kualitas Udara Tahun {selected_year}")
 
@@ -94,7 +99,7 @@ with col2:
     # Tambahkan marker untuk rata-rata kualitas udara
     for index, row in avg_air_quality.iterrows():
         popup_text = f"""
-        City: {row['station']}<br>
+        Station: {row['station']}<br>
         Avg PM2.5: {row['PM2.5']:.2f}<br>
         Avg PM10: {row['PM10']:.2f}
         """
